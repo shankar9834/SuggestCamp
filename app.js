@@ -8,7 +8,8 @@ const catchAsync = require("./utils/catchAsync.js");
 const ExpressError=require('./utils/ExpressError.js');
 const {campgroundSchema,reviewSchema}=require('./schemas.js');
 const Review=require('./models/review');
-
+const session=require('express-session');
+const flash=require('connect-flash');
 //added while routing
 const campgroundRoutes=require('./routes/campgroundRoutes');
 const reviewRoutes=require('./routes/reviewRoutes');
@@ -37,9 +38,26 @@ app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", ejsMate);
+app.use(express.static(path.join(__dirname,'public')));
 
-
-
+const sessionOptions={
+  secret:'notagoodsecret',
+   resave:false,
+   saveUninitialized:true,
+   cookie:{
+     httpOnly:true,
+     expires:Date.now*(1000*60*60*7*24),
+     maxAge:1000*60*60*7*24
+   }
+  
+}
+app.use(session(sessionOptions));
+app.use(flash());
+app.use((req,res,next)=>{
+  res.locals.success=req.flash('success');
+  res.locals.error=req.flash('error');
+  next();
+})
 
 app.get("/", (req, res) => {
   res.render("home");
