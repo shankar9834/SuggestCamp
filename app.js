@@ -8,8 +8,11 @@ const catchAsync = require("./utils/catchAsync.js");
 const ExpressError=require('./utils/ExpressError.js');
 const {campgroundSchema}=require('./schemas.js');
 const Review=require('./models/review');
+
 const app = express();
-app.engine("ejs", ejsMate);
+
+
+
 
 
 mongoose
@@ -26,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
+app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
 
 const validateCampground = (req, res, next) => {
