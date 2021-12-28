@@ -6,21 +6,9 @@ const methodOverride = require("method-override");
 const Campground = require("../models/campground");
 const Review=require('../models/review');
 const router=express.Router({mergeParams:true});
+const {validateReview}=require('../middleware');
 
-
-const validateReview=(req,res,next)=>{
-    const {error}=reviewSchema.validate(req.body);
-    if (error) {
-         const msg = error.details.map(el => el.message).join(',')
-          throw new ExpressError(msg, 400)
-             } 
-      else   {
-          next();
-           }
-}
-
-
-router.post("/review",async(req,res)=>{
+router.post("/review",validateReview,catchAsync(async(req,res)=>{
     const {id}=req.params;
     const campground=await Campground.findById(id);
     const review=new Review(req.body.review);
@@ -30,7 +18,7 @@ router.post("/review",async(req,res)=>{
     await campground.save();
     req.flash('success','Successfully added review');
     res.redirect(`/campgrounds/${id}`);
-  })
+  }))
   
   
   

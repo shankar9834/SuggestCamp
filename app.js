@@ -8,10 +8,13 @@ const catchAsync = require("./utils/catchAsync.js");
 const ExpressError=require('./utils/ExpressError.js');
 const {campgroundSchema,reviewSchema}=require('./schemas.js');
 const Review=require('./models/review');
+
 const session=require('express-session');
 const flash=require('connect-flash');
+
 const passport=require('passport');
 const LocalStategy=require('passport-local');
+
 const User=require('./models/user');
 //added while routing
 const campgroundRoutes=require('./routes/campgroundRoutes');
@@ -54,11 +57,13 @@ const sessionOptions={
    }
   
 }
+
 app.use(session(sessionOptions));
 app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
+
 passport.use(new LocalStategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -93,8 +98,8 @@ app.all('*', ( req, res, next) => {
 
 })
 
-app.listen(3000, () => {
-  console.log("listening on port 3000");
+app.listen(80, () => {
+  console.log("listening on port 80");
 });
 
 
