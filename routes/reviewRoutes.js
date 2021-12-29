@@ -6,13 +6,13 @@ const methodOverride = require("method-override");
 const Campground = require("../models/campground");
 const Review=require('../models/review');
 const router=express.Router({mergeParams:true});
-const {validateReview}=require('../middleware');
+const {validateReview,isLoggedIn,isReviewAuthor}=require('../middleware');
 
-router.post("/review",validateReview,catchAsync(async(req,res)=>{
+router.post("/review",isLoggedIn,validateReview,catchAsync(async(req,res)=>{
     const {id}=req.params;
     const campground=await Campground.findById(id);
     const review=new Review(req.body.review);
-   
+      review.author=req.user._id;
     campground.reviews.push(review);
     await review.save();
     await campground.save();
@@ -22,7 +22,7 @@ router.post("/review",validateReview,catchAsync(async(req,res)=>{
   
   
   
-  router.delete("/reviews/:reviewId",async(req,res)=>{
+  router.delete("/reviews/:reviewId",isLoggedIn,isReviewAuthor,async(req,res)=>{
   
     const {id,reviewId}=req.params;
     await Campground.findByIdAndUpdate(id,{$pull:{reviews:reviewId}});
