@@ -1,3 +1,8 @@
+if(process.env.NODE_ENV !=="production")
+{
+  require('dotenv').config();
+}
+
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
@@ -8,6 +13,8 @@ const catchAsync = require("./utils/catchAsync.js");
 const ExpressError=require('./utils/ExpressError.js');
 const {campgroundSchema,reviewSchema}=require('./schemas.js');
 const Review=require('./models/review');
+
+const DB_URL=process.env.DB_URL;
 
 const session=require('express-session');
 const flash=require('connect-flash');
@@ -25,8 +32,8 @@ const app = express();
 
 
 
-
-
+//
+//DB_URL
 mongoose
   .connect("mongodb://localhost:27017/yelp-camp")
   .then(() => {
