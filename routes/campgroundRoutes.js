@@ -6,6 +6,11 @@ const methodOverride = require("method-override");
 const {campgroundSchema}=require('../schemas.js');
 const {isLoggedIn,validateCampground,isAuthor}=require('../middleware');
 
+const {storage}=require('../cloudinary');
+
+const multer  = require('multer');
+const upload = multer({storage});
+
 const router=express.Router();
 
 
@@ -14,13 +19,18 @@ router.get("/",catchAsync(async (req, res) => {
     res.render("campgrounds/index", { campgrounds });
 }))
 
-router.post("/",isLoggedIn,validateCampground,catchAsync( async (req, res) => {
-    const campground = new Campground(req.body.campground);
+ router.post("/",isLoggedIn,upload.array('image'),validateCampground,catchAsync( async (req, res) => {
+  
+   const campground = new Campground(req.body.campground);
     campground.author=req.user._id;
+    campground.images=req.files.map(file=>({url:file.path,filename:file.filename}));
     await campground.save();
+  // console.log(campground);
     req.flash('success','Successfully made a new campground');
     res.redirect(`/campgrounds/${campground._id}`);
-  }));
+  })); 
+
+ 
   
   
   router.get("/new",isLoggedIn,(req, res) => {
@@ -53,12 +63,14 @@ router.post("/",isLoggedIn,validateCampground,catchAsync( async (req, res) => {
   
   
   
-router.put("/:id",isLoggedIn,isAuthor,validateCampground,catchAsync(async (req, res,next) => {
+router.put("/:id",isLoggedIn,isAuthor,upload.array('image'),validateCampground,catchAsync(async (req, res,next) => {
 
       const { id } = req.params;
       const { campground } = req.body;
      const EditedCampground = await Campground.findByIdAndUpdate(id, campground);
-     
+    const file=req.files.map(f=>({url:f.path,filename:f.filename}));
+    EditedCampground.images.push(...file);
+    EditedCampground.save();
       req.flash('success','Successfully edited campground');
       res.redirect(`/campgrounds/${EditedCampground._id}`);
     })

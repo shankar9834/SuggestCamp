@@ -4,7 +4,7 @@
       <div class="col-6 offset-3">
           <h1>new campground</h1>
           <div class="mb-3">
-              <form action="/campgrounds"  method="POST" novalidate class="validated-form">
+              <form action="/campgrounds"  method="POST" novalidate class="validated-form" enctype="multipart/form-data">
              <div>
                <label class="form-label " for="title">title</label>
               <input class="form-control" type="text" id="title" name="campground[title]" required>
@@ -19,13 +19,23 @@
                 Looks good!
               </div>
             </div>
-            <div class="mb-3">
+            
+          <!--  <div class="mb-3">
                <label class=" form-label" for="image">Image Url</label>
                <input class="form-control" type="text"  id="image" name="campground[image]">
                <div class="valid-feedback">
                 Looks good!
               </div>
+             </div> -->
+             <div class="mb-3">
+              <label class=" form-label" for="image">Image Url</label>
+              <input class="form-control" type="file"  id="image" name="image" multiple>
+              <div class="valid-feedback">
+               Looks good!
              </div>
+             </div>
+
+
              <div class="mb-3">
                <label class="form-label" for="price">Campground Price</label>
                <div class="input-group">
