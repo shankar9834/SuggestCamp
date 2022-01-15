@@ -14,8 +14,8 @@ const ExpressError=require('./utils/ExpressError.js');
 const {campgroundSchema,reviewSchema}=require('./schemas.js');
 const Review=require('./models/review');
 
- const DB_URL="mongodb://localhost:27017/yelp-camp";
-//process.env.DB_URL || 
+ const DB_URL=process.env.DB_URL || "mongodb://localhost:27017/yelp-camp";
+
 const session=require('express-session');
 const flash=require('connect-flash');
 
