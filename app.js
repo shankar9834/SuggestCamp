@@ -14,8 +14,8 @@ const ExpressError=require('./utils/ExpressError.js');
 const {campgroundSchema,reviewSchema}=require('./schemas.js');
 const Review=require('./models/review');
 
-const DB_URL=process.env.DB_URL || "mongodb://localhost:27017/yelp-camp";
-
+ const DB_URL="mongodb://localhost:27017/yelp-camp";
+//process.env.DB_URL || 
 const session=require('express-session');
 const flash=require('connect-flash');
 
@@ -121,7 +121,8 @@ app.all('*', ( req, res, next) => {
 
 })
 
-app.listen(80, () => {
+const port=process.env.PORT || 80;
+app.listen(port, () => {
   console.log("listening on port 80");
 });
 
