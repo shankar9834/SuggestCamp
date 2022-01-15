@@ -14,7 +14,7 @@ const ExpressError=require('./utils/ExpressError.js');
 const {campgroundSchema,reviewSchema}=require('./schemas.js');
 const Review=require('./models/review');
 
-const DB_URL=process.env.DB_URL;
+const DB_URL=process.env.DB_URL || "mongodb://localhost:27017/yelp-camp";
 
 const session=require('express-session');
 const flash=require('connect-flash');
@@ -28,6 +28,8 @@ const campgroundRoutes=require('./routes/campgroundRoutes');
 const reviewRoutes=require('./routes/reviewRoutes');
 const userRoutes=require('./routes/userRoutes');
 
+const MongoDBStore = require("connect-mongodb-session")(session);
+
 const app = express();
 
 
@@ -35,7 +37,7 @@ const app = express();
 //
 //DB_URL
 mongoose
-  .connect("mongodb://localhost:27017/yelp-camp")
+  .connect(DB_URL)
   .then(() => {
     console.log("connection established");
   })
@@ -53,8 +55,22 @@ app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname,'public')));
 
+const secret=process.env.SECRET || 'notagoodsecret';
+
+const store = new MongoDBStore({
+  uri:DB_URL ,
+  secret,
+  touchAfter: 24 * 60 * 60
+});
+
+store.on("error", function (e) {
+  console.log("SESSION STORE ERROR", e)
+})
+
+
 const sessionOptions={
-  secret:'notagoodsecret',
+  store,
+  secret,
    resave:false,
    saveUninitialized:true,
    cookie:{
